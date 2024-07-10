@@ -28,8 +28,6 @@ from dataset_creator import example_lib
 from dataset_creator import generated_dataset
 from dataset_creator import helpers
 from dataset_creator.features import base_feature
-from dataset_creator.features import generic_lambda_feature
-from dataset_creator.features import inference_feature
 from dataset_creator.pipeline import beam_populator
 from dataset_creator.pipeline import example_bank_sink
 
