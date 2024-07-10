@@ -1,0 +1,293 @@
+name: All GitHub checks
+
+on:
+  workflow_call:
+    inputs:
+      run_pytest:
+        description: 'Whether to run pytest'
+        default: true
+        type: boolean
+      run_mypy:
+        description: 'Whether to run mypy'
+        default: true
+        type: boolean
+      run_snyk:
+        description: 'Whether to run Snyk for vulnerability and license checking'
+        default: false
+        type: boolean
+      post_coverage_comment:
+        description: 'Whether to post the code coverage comment'
+        default: true
+        type: boolean
+      python_versions:
+        description: 'Stringified list of the target Python versions to test'
+        default: '["3.9", "3.10"]'
+        type: string
+      system_packages:
+        description: 'Stringified list of extra Ubuntu system packages to install'
+        default: '[]'
+        type: string
+      path:
+        description: 'Path to the python project (where requirements*.txt exists)'
+        default: '.'
+        type: string
+      sub_path:
+        description: 'Relative path from the project directory to the directory to test'
+        default: 'src'
+        type: string
+      wip:
+        description: 'Google cloud workload identity provider'
+        type: string
+        required: false
+      gcp_sa:
+        description: 'Google service account'
+        type: string
+        required: false
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.path }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{fromJson(inputs.python_versions)}}
+
+    name: Python ${{ matrix.python-version }} tests
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        lfs: true
+    - name: Checkout LFS objects
+      run: git lfs checkout
+    - name: Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+        cache-dependency-path: '${{ inputs.path }}/requirements*.txt'
+
+    - name: Determine Google Cloud Auth Input
+      id: determine_auth_input
+      run: |
+        if [[ -n "${{ inputs.wif }}" ]]; then
+          echo "token_format=access_token" >> "$GITHUB_ENV"
+        fi
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      continue-on-error: true
+      with:
+        token_format: ${{ env.token_format }}
+        credentials_json: ${{ secrets.GCP_SA_KEY || secrets.DS_ARTIFACT_REGISTRY_READER_SA_KEY }}
+        workload_identity_provider: '${{ inputs.wip }}'
+        service_account: ${{ inputs.gcp_sa || secrets.GCP_SA_EMAIL || secrets.DS_ARTIFACT_REGISTRY_READER_SA_EMAIL }}
+        export_environment_variables: true
+
+    - name: Install extra system packages
+      env:
+        PACKAGES: ${{ join(fromJson(inputs.system_packages), ' ') }}
+      run: |
+        readonly -a SYSTEM_PACKAGES=( ${PACKAGES} )
+        sudo apt update
+        sudo apt install -y "${SYSTEM_PACKAGES[@]}"
+        sudo apt-get install libgl1 libglib2.0
+      if: "${{ inputs.system_packages != '' && inputs.system_packages != '[]' }}"
+
+    - name: Install development dependencies
+      run: |
+        export GIT_CLONE_PROTECTION_ACTIVE=false
+        pip config set global.disable-pip-version-check true
+        # Use HTTPS access for private dependencies in this action.
+        sudo git config --system \
+          url."https://x-access-token:${{ secrets.GH_READ_TOKEN }}@github.com/".insteadOf \
+          ssh://git@github.com/
+        python -m pip install --upgrade pip==22.3.1
+        # Install version-specific requirements files if they exist.
+        if [ -f "requirements_${{ matrix.python-version }}.txt" ]; then
+          cp requirements_${{ matrix.python-version }}.txt requirements.txt
+        fi
+        # Enable Artifact Registry access if private packages are referenced.
+        # The keyring helper must be installed first, before pip install -r.
+        if grep -q "python\.pkg\.dev\|keyrings\.google-artifactregistry-auth" requirements.txt; then
+          pip install \
+            keyring==23.11.0 \
+            keyrings.google-artifactregistry-auth==1.1.1
+        fi
+        pip install -r requirements.txt
+        # For repositories with explicit separate dev requirements, install
+        # them afterwards.  Don't pip-sync since they might not include the
+        # regular dependencies, which we don't want to uninstall.
+        if [ -f "requirements_dev.txt" ]; then
+          pip install -r requirements_dev.txt
+        fi
+        # Remove any build directories created by pip so that pytest and mypy aren't confused.
+        rm -rf build/
+        # Remove the ability to read private repos
+        sudo git config --system --unset \
+          url."https://x-access-token:${{ secrets.GH_READ_TOKEN }}@github.com/".insteadOf
+    - name: Install Riegeli, since it isn't installed in the requirements.txt
+      run: |
+        # Install bazel
+        sudo apt install apt-transport-https curl gnupg -y
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg \
+          | gpg --dearmor > bazel-archive-keyring.gpg
+        sudo mv bazel-archive-keyring.gpg /usr/share/keyrings
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" \
+          | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt update && sudo apt install bazel
+        # Install Riegeli python package
+        git clone https://github.com/google/riegeli.git
+        cd riegeli || exit
+        git checkout b92772a938146c58b39ae8bda3ca2f978ab01631
+        ./configure
+        patches_dir="../setup/riegeli_patches"
+        patch WORKSPACE "$patches_dir/WORKSPACE.patch"
+        patch python/riegeli/records/BUILD "$patches_dir/BUILD.patch"
+        cp -f "$patches_dir/protobuf.patch" third_party/protobuf.patch
+        bazel build -c opt //python:build_pip_package --enable_bzlmod=false
+        bazel-bin/python/build_pip_package --dest . --sdist --bdist
+        pip install riegeli*.whl
+        cd ..
+        rm -rf riegeli
+      if: ${{ inputs.run_pytest }}
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/python@dc22abdbe8ec00e2a925256fef96f319ca5510ce
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        command: test
+        args: |
+          --command=python3
+          --show-vulnerable-paths=all
+          --target-reference="${GITHUB_REPOSITORY}"
+          --skip-unresolved=true
+          --package-manager=pip
+          --file=requirements.txt
+      continue-on-error: true
+      if: ${{ inputs.run_snyk }}
+    - name: Run mypy type checking
+      run: |
+        if ! [ -x "$(command -v mypy)" ]; then
+          pip install \
+            mypy==1.8.0 \
+            mypy-extensions==1.0.0 \
+            typing_extensions==4.5.0
+        fi
+        mypy ${{ inputs.sub_path }} --follow-imports skip
+      shell: bash
+      if: ${{ inputs.run_mypy }}
+    - name: Start spanner emulator
+      run: |
+        echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] \
+          https://packages.cloud.google.com/apt cloud-sdk main" \
+          | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+          | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+        sudo apt-get update
+        sudo apt-get -o Dpkg::Options::="--force-overwrite" install google-cloud-sdk-spanner-emulator
+        gcloud config configurations create emulator
+        gcloud config set auth/disable_credentials true
+        gcloud config set project test-project-id
+        gcloud config set api_endpoint_overrides/spanner http://localhost:9020/
+        gcloud emulators spanner start &
+        gcloud spanner instances create datasetcreator \
+          --config=emulator-config --description="Test Instance" --nodes=1 \
+          --project=test-project-id
+        gcloud spanner databases create dataset_creator_db \
+          --instance=datasetcreator --project=test-project-id \
+          --ddl-file=setup/gcp/database.ddl
+      if: ${{ inputs.run_pytest }}
+    - name: Start Pub/Sub emulator
+      run: |
+        sudo apt-get -o Dpkg::Options::="--force-overwrite" install google-cloud-sdk-pubsub-emulator
+        gcloud beta emulators pubsub start --project=test-project-id &
+        export PUBSUB_EMULATOR_HOST=localhost:8085
+        git clone --depth 2 --no-checkout https://github.com/googleapis/python-pubsub.git
+        cd python-pubsub
+        git sparse-checkout set samples/snippets
+        git checkout
+        pip install -r samples/snippets/requirements.txt
+        python samples/snippets/publisher.py test-project-id create dataset-creator-unpopulated-queue
+        python samples/snippets/publisher.py test-project-id create dataset-creator-populated-queue
+        cd ..
+        rm -rf python-pubsub
+      if: ${{ inputs.run_pytest }}
+    - name: Test with pytest
+      run: |
+        export SPANNER_EMULATOR_HOST=localhost:9010
+        export PUBSUB_EMULATOR_HOST=localhost:8085
+        if ! [ -x "$(command -v pytest)" ]; then
+          pip install \
+            coverage==6.5.0 \
+            pytest==7.2.0 \
+            pytest-cov==4.0.0 \
+            toml==0.10.2
+        fi
+        if ! pip list | grep -Fq pytest-cov; then
+          pip install pytest-cov==4.0.0
+        fi
+        if ! pip list | grep -Fq coverage; then
+          pip install coverage==6.5.0
+        fi
+        if ! pip list | grep -Fq toml; then
+          pip install toml==0.10.2
+        fi
+        # Set required options here to minimize user burden.
+        echo -e "[run]\nrelative_files = true\nomit = /tmp/*" >> .coveragerc
+        # Add the project path to PYTHONPATH in case pytest is run for a sub-directory
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+        # Generate XML for the comment action and HTML for later inspection.
+        pytest ${{ inputs.sub_path }} --cov src/dataset_creator --junitxml pytest.xml --cov-report html
+        coverage report -m --ignore-errors
+      if: ${{ inputs.run_pytest }}
+    - name: Rename test report file
+      run: |
+        mv ${{ inputs.path }}/.coverage ${{ inputs.path }}/.coverage.${{ matrix.python-version }}
+        mv ${{ inputs.path }}/pytest.xml ${{ inputs.path }}/pytest.${{ matrix.python-version }}.xml
+        mv ${{ inputs.path }}/htmlcov ${{ inputs.path }}/htmlcov.${{ matrix.python-version }}
+      if: ${{ inputs.run_pytest }}
+    - name: Store Test Results
+      uses: actions/upload-artifact@v3
+      with:
+        name: "Test Results"
+        path: |
+          ${{ inputs.path }}/pytest.${{ matrix.python-version }}.xml
+          ${{ inputs.path }}/htmlcov.${{ matrix.python-version }}/
+          ${{ inputs.path }}/.coverage.${{ matrix.python-version }}
+      if: ${{ inputs.run_pytest }}
+
+  coverage:
+    name: Post Results Comments
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ inputs.run_pytest }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Download test results
+      uses: actions/download-artifact@v3
+      with:
+        name: "Test Results"
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@4e7013f9576bd22ffdae979dc6e68cb9ec2aeece # tag v2.7.0
+      with:
+        junit_files: "*.xml"
+        report_individual_runs: true
+        check_run_annotations_branch: "*"
+        search_pull_requests: true
+    - name: Set relative file paths
+      if: ${{ inputs.post_coverage_comment }}
+      run: |
+        echo -e "[run]\nrelative_files = true\nomit=/tmp/*\n\n[report]\nignore_errors = true" >> .coveragerc
+    - name: Publish coverage results
+      if: ${{ inputs.post_coverage_comment }}
+      id: coverage_comment
+      uses: py-cov-action/python-coverage-comment-action@b3d7e98bf5528b07d6951ef7a93e2b156f960112 # tag v3.1.0
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MERGE_COVERAGE_FILES: true
