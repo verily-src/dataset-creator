@@ -566,7 +566,7 @@ referencing==0.35.1
     #   jsonschema-specifications
 regex==2024.4.28
     # via apache-beam
-requests==2.31.0
+requests==2.32.2
     # via
     #   apache-beam
     #   google-api-core
