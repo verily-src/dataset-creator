@@ -237,13 +237,8 @@ class CustomFeature(abc.ABC):
 
   def __hash__(self) -> int:
     config = self.get_config()
-    sorted_config = {}
-    for k in sorted(config):
-      value = config[k]
-      if isinstance(value, bytes):
-        value = value.decode()
-      sorted_config[k] = value
-    serialized = json.dumps(sorted_config, sort_keys=True).encode()
+    sorted_config = {k: config[k] for k in sorted(config)}
+    serialized = str(sorted_config).encode()
     return int(hashlib.md5(serialized).hexdigest(), 16)
 
   def __eq__(self, value: object) -> bool:

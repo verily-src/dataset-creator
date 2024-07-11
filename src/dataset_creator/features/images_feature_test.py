@@ -264,4 +264,4 @@ class ImagesFeatureTest(parameterized.TestCase, tf.test.TestCase):
         read_at=[0, 1, 2],
         image_size=(224, 224),
     )
-    self.assertEqual(hash(feature), 2246803685166274479)
+    self.assertEqual(hash(feature), 637554732091181014)
