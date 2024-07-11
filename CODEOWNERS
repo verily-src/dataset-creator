@@ -29,4 +29,7 @@
 #   For this reason, * should always be the first rule.
 
 # ENFORCED: Catch-all rule protecting all files by default.
-* @itayrav
+*  @verily-src/ml-infra @itayrav
+
+# ENFORCED: Workflows required by all repositories are owned by @verily-src/verily-engprod.
+.github/workflows/enforced-*  @verily-src/verily-engprod

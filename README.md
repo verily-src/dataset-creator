@@ -5,6 +5,8 @@ freshness: { owner: 'itayr' reviewed: '2023-09-19' }
 
 # DatasetCreator
 
+Developed and maintained by the nice folks at [Verily](https://verily.com/).
+
 [![Presubmits](https://github.com/verily-src/dataset-creator/actions/workflows/run_presubmit.yaml/badge.svg?branch=main)](https://github.com/verily-src/dataset-creator/actions/workflows/run_presubmit.yaml)
 [![Tests](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml/badge.svg?branch=main)](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml)
 [![Coverage badge](https://github.com/verily-src/dataset-creator/raw/python-coverage-comment-action-data/badge.svg)](https://github.com/verily-src/dataset-creator/tree/python-coverage-comment-action-data)
