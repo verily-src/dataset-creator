@@ -22,7 +22,7 @@ _FrameNumber: TypeAlias = base_video_io.FrameNumber
 def new_feature(
     shape: tuple[int, int],
     timestamps: Sequence[_TimestampMillis] = (),
-    frame_numbers: Sequence[_FrameNumber] = ()
+    frame_numbers: Sequence[_FrameNumber] = (),
 ) -> images_feature.ImagesFeature:
   if timestamps:
     read_by = images_feature.READ_BY_TIMESTAMP_MILLIS
@@ -258,4 +258,10 @@ class ImagesFeatureTest(parameterized.TestCase, tf.test.TestCase):
     self.assertNotEqual(new_feature((1, 1), [0, 1, 2]), 3.14)
 
   def test_hash_is_deterministic(self):
-    self.assertEqual(hash(new_feature((1, 1), [0, 1, 2])), 832813650568112075)
+    feature = images_feature.ImagesFeature(
+        reader=video_io.VideoFileReader('/tmp/test.mp4', check_path=False),
+        read_by=images_feature.READ_BY_FRAME_NUMBER,
+        read_at=[0, 1, 2],
+        image_size=(224, 224),
+    )
+    self.assertEqual(hash(feature), 2246803685166274479)

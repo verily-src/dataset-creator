@@ -42,7 +42,6 @@ def _slice_h5_dataset(
     slice_indexes: Sequence[int]
 ) -> np.ndarray:
   num_dims = len(dataset.shape)
-  print(dataset, dataset.shape)
   sliced: list[Union[slice, int]] = [slice(None) for _ in range(num_dims)]
   for dim, index in zip(slice_dims, slice_indexes):
     sliced[dim] = index
