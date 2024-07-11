@@ -25,6 +25,14 @@ def _container_to_outputs(*_) -> Mapping[str, Any]:
 
 class GenericLambdaFeatureTest(parameterized.TestCase):
 
+  def test_isnt_self_contained(self):
+    feature = generic_lambda_feature.GenericLambdaFeature(
+        split_fn=lambda container: [container],
+        process_fn=_container_to_outputs,
+        merge_fn=lambda values: values[0],
+    )
+    self.assertFalse(feature.is_self_contained)
+
   def test_output_signature(self):
     feature = generic_lambda_feature.GenericLambdaFeature(
         split_fn=lambda container: [container],

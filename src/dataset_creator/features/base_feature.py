@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import abc
 import hashlib
+import json
 from typing import Any, Mapping, Sequence, Union
 
 import numpy as np
@@ -236,7 +237,13 @@ class CustomFeature(abc.ABC):
 
   def __hash__(self) -> int:
     config = self.get_config()
-    serialized = str({k: config[k] for k in sorted(config)}).encode()
+    sorted_config = {}
+    for k in sorted(config):
+      value = config[k]
+      if isinstance(value, bytes):
+        value = value.decode()
+      sorted_config[k] = value
+    serialized = json.dumps(sorted_config, sort_keys=True).encode()
     return int(hashlib.md5(serialized).hexdigest(), 16)
 
   def __eq__(self, value: object) -> bool:

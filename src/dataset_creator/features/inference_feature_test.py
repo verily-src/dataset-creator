@@ -41,6 +41,9 @@ class InferenceFeatureTest(tf.test.TestCase):
     )
     self.feature.container = {'test': self.feature}
 
+  def test_isnt_self_contained(self):
+    self.assertFalse(self.feature.is_self_contained)
+
   def test_split_outputs_are_compatible_with_model(self):
     for model_input in self.feature.split():
       self.model(model_input, training=False)
