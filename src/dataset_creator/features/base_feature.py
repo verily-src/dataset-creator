@@ -235,7 +235,8 @@ class CustomFeature(abc.ABC):
     return self.__class__.from_config, (self.get_config(),)
 
   def __hash__(self) -> int:
-    serialized = str(self.get_config()).encode()
+    config = self.get_config()
+    serialized = str({k: config[k] for k in sorted(config)}).encode()
     return int(hashlib.md5(serialized).hexdigest(), 16)
 
   def __eq__(self, value: object) -> bool:

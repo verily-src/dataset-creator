@@ -258,4 +258,4 @@ class ImagesFeatureTest(parameterized.TestCase, tf.test.TestCase):
     self.assertNotEqual(new_feature((1, 1), [0, 1, 2]), 3.14)
 
   def test_hash_is_deterministic(self):
-    self.assertEqual(hash(new_feature((1, 1), [0, 1, 2])), 1505613341451232321)
+    self.assertEqual(hash(new_feature((1, 1), [0, 1, 2])), 403591816384137213)
