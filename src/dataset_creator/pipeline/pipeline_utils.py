@@ -34,8 +34,6 @@ from dataset_creator.pipeline import example_bank_sink
 Example = example_lib.Example
 PCollection: TypeAlias = beam.pvalue.PCollection
 
-PARQUET_COLUMN = 'serialized'
-
 # ================= GLOBALS FOR THE DIRECT STREAMING PIPELINE =================
 
 _NUM_EXAMPLES_PER_BUNDLE = 512
