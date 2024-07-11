@@ -1,0 +1,151 @@
+
+type = string-attribute
+name = HISTORY_NOTE
+count = 138
+'[itayr@itayr-datasets-notebook: Mon Jun 10 06:44:46 2024] {AFNI_24.1.17:linux_ubuntu_16_64} 3dcopy /gcs/mbh-data/Samples/fmri.nii.gz fmri~
+
+type = string-attribute
+name = TYPESTRING
+count = 15
+'3DIM_HEAD_ANAT~
+
+type = string-attribute
+name = IDCODE_STRING
+count = 27
+'AFN_wMNZG73dAHQ9fFlWiu1OYw~
+
+type = string-attribute
+name = IDCODE_DATE
+count = 25
+'Mon Jun 10 06:44:46 2024~
+
+type = integer-attribute
+name = SCENE_DATA
+count = 8
+ 0 2 0 -999 -999
+ -999 -999 -999
+
+type = string-attribute
+name = LABEL_1
+count = 5
+'zyxt~
+
+type = string-attribute
+name = LABEL_2
+count = 5
+'zyxt~
+
+type = string-attribute
+name = DATASET_NAME
+count = 5
+'zyxt~
+
+type = integer-attribute
+name = ORIENT_SPECIFIC
+count = 3
+ 0 2 4
+
+type  = float-attribute
+name  = ORIGIN
+count = 3
+      -95.98916       61.20165      -97.08485
+
+type  = float-attribute
+name  = DELTA
+count = 3
+              3             -3           3.75
+
+type  = float-attribute
+name  = IJK_TO_DICOM
+count = 12
+              3              0              0      -95.98916              0
+             -3              0       61.20165              0              0
+           3.75      -97.08485
+
+type  = float-attribute
+name  = IJK_TO_DICOM_REAL
+count = 12
+              3             -0             -0      -95.98916             -0
+       -2.96613      0.5619092       61.20165              0      0.4495274
+       3.707662      -97.08485
+
+type  = float-attribute
+name  = BRICK_STATS
+count = 72
+              0           1564              0           1643              0
+           1568              0           1589              0           1560
+              0           1555              0           1555              0
+           1539              0           1519              0           1537
+              0           1527              0           1530              0
+           1561              0           1548              0           1544
+              0           1566              0           1533              0
+           1525              0           1551              0           1503
+              0           1526              0           1535              0
+           1535              0           1536              0           1561
+              0           1501              0           1534              0
+           1535              0           1491              0           1554
+              0           1552              0           1521              0
+           1556              0           1542              0           1510
+              0           1525
+
+type = integer-attribute
+name = TAXIS_NUMS
+count = 8
+ 36 0 77002 -999 -999
+ -999 -999 -999
+
+type  = float-attribute
+name  = TAXIS_FLOATS
+count = 8
+              0              2              0              0              0
+        -999999        -999999        -999999
+
+type = integer-attribute
+name = DATASET_RANK
+count = 8
+ 3 36 0 0 0
+ 0 0 0
+
+type = integer-attribute
+name = DATASET_DIMENSIONS
+count = 5
+ 64 64 37 0 0
+
+type = integer-attribute
+name = BRICK_TYPES
+count = 36
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3 3 3 3 3
+ 3
+
+type  = float-attribute
+name  = BRICK_FLOAT_FACS
+count = 36
+              0              0              0              0              0
+              0              0              0              0              0
+              0              0              0              0              0
+              0              0              0              0              0
+              0              0              0              0              0
+              0              0              0              0              0
+              0              0              0              0              0
+              0
+
+type = string-attribute
+name = TEMPLATE_SPACE
+count = 5
+'ORIG~
+
+type = integer-attribute
+name = INT_CMAP
+count = 1
+ 0
+
+type = string-attribute
+name = BYTEORDER_STRING
+count = 10
+'LSB_FIRST~

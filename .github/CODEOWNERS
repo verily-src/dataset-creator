@@ -1,5 +1,0 @@
-# Note: For syntax, see https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners#codeowners-syntax
-
-# TODO: Uncomment & edit this line to automatically add your team as a reviewer on all PRs.
-#       Sorry we don't template this for you!
-# * @verily-src/my-superb-team

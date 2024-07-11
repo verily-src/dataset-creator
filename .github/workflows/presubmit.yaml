@@ -1,0 +1,92 @@
+name: Python presubmit
+
+on:
+  workflow_call:
+    inputs:
+      autoformat:
+        description: 'Whether to automatically format Python code using yapf and isort'
+        default: false
+        type: boolean
+      run_pylint:
+        description: 'Whether to run pylint'
+        default: true
+        type: boolean
+      run_pytest:
+        description: 'Whether to run pytest'
+        default: true
+        type: boolean
+      run_mypy:
+        description: 'Whether to run mypy'
+        default: true
+        type: boolean
+      post_coverage_comment:
+        description: 'Whether to post the code coverage comment'
+        default: true
+        type: boolean
+      run_snyk:
+        description: 'Whether to run Snyk for vulnerability and license checking'
+        default: false
+        type: boolean
+      default_branch:
+        description: 'Name of the repository default branch'
+        default: 'main'
+        type: string
+      python_versions:
+        description: 'Stringified list of the target Python versions to test'
+        default: '["3.9", "3.10"]'
+        type: string
+      system_packages:
+        description: 'Stringified list of extra Ubuntu system packages to install'
+        default: '[]'
+        type: string
+      path:
+        description: 'Path to the python project (where requirements*.txt exists)'
+        default: '.'
+        type: string
+      sub_path:
+        description: 'Relative Path from the python project directory to the specific folder to run CI'
+        default: '.'
+        type: string
+      wip:
+        description: google cloud workload identity provider
+        type: string
+        required: false
+      gcp_sa:
+        description: google service account
+        type: string
+        required: false
+
+
+jobs:
+  lint:
+    name: Lint and format Python
+    runs-on: ubuntu-latest
+    if: ${{ inputs.run_pylint || inputs.autoformat }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+    - run: pip install isort==5.11.5 pylint==2.17.5
+      shell: bash
+    - run: |
+        find src -type f -name "*.py" -exec pylint -j 0 '{}' +
+        isort -j -1 --py 3 --check-only --verbose --profile google src
+      if: ${{ inputs.run_pylint }}
+
+  build_and_test:
+    name: Build and Test
+    uses: ./.github/workflows/python_build_and_test.yaml
+    with:
+      run_pytest: ${{ inputs.run_pytest }}
+      run_snyk: ${{ inputs.run_snyk }}
+      run_mypy: ${{ inputs.run_mypy }}
+      post_coverage_comment: ${{ inputs.post_coverage_comment }}
+      python_versions: ${{ inputs.python_versions }}
+      system_packages: ${{ inputs.system_packages }}
+      path: ${{ inputs.path }}
+      sub_path: ${{ inputs.sub_path }}
+      wip: ${{ inputs.wip }}
+      gcp_sa: ${{ inputs.gcp_sa }}
+    secrets: inherit

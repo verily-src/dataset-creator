@@ -1,0 +1,84 @@
+[build-system]
+# There are multiple ways to do this in Python, and flit as defined
+# here works for common pure Python use cases.  See
+# https://packaging.python.org/en/latest/tutorials/packaging-projects/#creating-pyproject-toml
+# for alternatives.
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "dataset-creator"
+# Change these values for your team and library.
+authors = [
+    {name = "Itay Ravia", email = "itayravia@gmail.com"},
+]
+description = "Repository for Dataset Creator implementation"
+
+# The version string will be automatically updated by the release
+# workflow (release.yml), so you do not need to change it manually.
+version = "2.2.1"
+requires-python = ">=3.9"
+classifiers = [
+    # Attempt to prevent accidental upload to PyPI.
+    "Private :: Do Not Upload",
+    # Set a license for compatibility with future license checks.
+    "License :: Other/Proprietary License"
+]
+
+dependencies = [
+    "dill",
+    "mne",
+    "defusedxml",
+    "numpy",
+    "pandas",
+    "absl-py",
+    "apache-beam[gcp,interactive,dataframe]==2.56.0",
+    "more-itertools",
+    "torch",
+    "opencv-python",
+    "scipy>=1.9.3",
+    "nibabel",
+    "yt_dlp",
+    "tqdm",
+    "immutabledict",
+    "google-cloud-dataflow-client",
+    "google-cloud-storage",
+    "google-cloud-spanner",
+    "google-cloud-pubsub",
+    "tensorflow-cpu==2.15.1",  # Exact version required for the inference_model
+    "typing_extensions<4.6.0",
+    "wfdb",
+]
+
+[project.optional-dependencies]
+# Dev dependencies are not required or installed for users of your
+# library, but they are installed locally in this repository to run
+# tests and other presubmit checks.
+dev = [
+    "keyrings.google-artifactregistry-auth",
+    "pandas-stubs",
+    "pytest",
+    "tqdm-stubs",
+    "types-google-cloud-ndb",
+    "types-requests",
+    "types-tensorflow",
+]
+
+[tool.flit.module]
+# This name must match the code directory name if the project name
+# does not.
+name = "dataset_creator"
+
+[tool.flit.sdist]
+exclude = [
+    "**/*test.py",
+    "**/testdata/",
+]
+
+[tool.isort]
+profile = "google"
+line_length = 80
+
+[[tool.mypy.overrides]]
+module = "cv2.*"
+ignore_missing_imports = true

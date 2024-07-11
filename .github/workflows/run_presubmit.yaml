@@ -1,0 +1,19 @@
+# This workflow calls the shared presubmit workflow from within this
+# repository, making testing and development easier.
+
+name: Presubmits
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  presubmit:
+    uses: ./.github/workflows/presubmit.yaml
+    with:
+      run_pytest: false
+      python_versions: '["3.9", "3.10"]'
+      system_packages: '["ghostscript", "python3-tk", "tesseract-ocr"]'
+    secrets: inherit

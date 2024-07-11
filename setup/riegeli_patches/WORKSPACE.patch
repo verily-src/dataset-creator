@@ -1,0 +1,66 @@
+diff --git a/WORKSPACE b/WORKSPACE
+index 1bfd185c..3a8fb135 100644
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -6,9 +6,9 @@ load("//tf_dependency:tf_configure.bzl", "tf_configure")
+ 
+ http_archive(
+     name = "com_google_absl",
+-    sha256 = "54707f411cb62a26a776dad5fd60829098c181700edcd022ea5c2ca49e9b7ef1",
+-    strip_prefix = "abseil-cpp-20220623.1",
+-    urls = ["https://github.com/abseil/abseil-cpp/archive/refs/tags/20220623.1.zip"],  # 2022-06-23
++    sha256 = "2d40102022a01c6f3dddd23ec9ddafff49697a2e4bd09af68bccb74d26ecf64a",
++    strip_prefix = "abseil-cpp-20230125.2",
++    urls = ["https://github.com/abseil/abseil-cpp/archive/refs/tags/20230125.2.zip"],  # 2023-01-25
+ )
+ 
+ http_archive(
+@@ -93,9 +93,9 @@ http_archive(
+     name = "com_google_protobuf",
+     patch_args = ["-p1"],
+     patches = ["//third_party:protobuf.patch"],
+-    sha256 = "cfcba2df10feec52a84208693937c17a4b5df7775e1635c1e3baffc487b24c9b",
+-    strip_prefix = "protobuf-3.9.2",
+-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.9.2.zip"],  # 2019-09-20
++    sha256 = "f66073dee0bc159157b0bd7f502d7d1ee0bc76b3c1eac9836927511bdc4b3fc1",
++    strip_prefix = "protobuf-3.21.9",
++    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.21.9.zip"],  # 2019-09-20
+ )
+ 
+ http_archive(
+@@ -123,12 +123,12 @@ http_archive(
+ )
+ 
+ # Needed by @com_google_protobuf.
+-http_archive(
+-    name = "bazel_skylib",
+-    sha256 = "28f81e36692e1d87823623a99966b2daf85af3fdc1b40f98e37bd5294f3dd185",
+-    strip_prefix = "bazel-skylib-1.0.3",
+-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/1.0.3.zip"],  # 2020-08-27
+-)
++# http_archive(
++#     name = "bazel_skylib",
++#     sha256 = "28f81e36692e1d87823623a99966b2daf85af3fdc1b40f98e37bd5294f3dd185",
++#     strip_prefix = "bazel-skylib-1.0.3",
++#     urls = ["https://github.com/bazelbuild/bazel-skylib/archive/1.0.3.zip"],  # 2020-08-27
++# )
+ 
+ # Needed by @com_google_protobuf.
+ bind(
+@@ -137,14 +137,8 @@ bind(
+ )
+ 
+ # Needed by @com_google_protobuf.
+-# TODO: @com_google_protobuf >= 3.10.0 will not need this
+-# (it will use @six//:six instead of //external:six). Use this:
+-# load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+-# protobuf_deps()
+-bind(
+-    name = "six",
+-    actual = "@six_archive//:six",
+-)
++load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
++protobuf_deps()
+ 
+ python_configure(name = "local_config_python")
+ 
