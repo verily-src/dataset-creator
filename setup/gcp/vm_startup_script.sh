@@ -243,7 +243,7 @@ fi
 # ========================== Install DatasetCreator ============================
 
 # Define the GitHub repository and package name
-github_repository="itayrav/oss-dataset-creator"
+github_repository="verily-src/dataset-creator"
 package_name="dataset-creator"
 
 # Check if the package is installed

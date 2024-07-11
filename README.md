@@ -5,14 +5,14 @@ freshness: { owner: 'itayr' reviewed: '2023-09-19' }
 
 # DatasetCreator
 
-[![Presubmits](https://github.com/itayrav/oss-dataset-creator/actions/workflows/run_presubmit.yaml/badge.svg?branch=main)](https://github.com/itayrav/oss-dataset-creator/actions/workflows/run_presubmit.yaml)
-[![Tests](https://github.com/itayrav/oss-dataset-creator/actions/workflows/run_tests.yaml/badge.svg?branch=main)](https://github.com/itayrav/oss-dataset-creator/actions/workflows/run_tests.yaml)
-[![Coverage badge](https://github.com/itayrav/oss-dataset-creator/raw/python-coverage-comment-action-data/badge.svg)](https://github.com/itayrav/oss-dataset-creator/tree/python-coverage-comment-action-data)
+[![Presubmits](https://github.com/verily-src/dataset-creator/actions/workflows/run_presubmit.yaml/badge.svg?branch=main)](https://github.com/verily-src/dataset-creator/actions/workflows/run_presubmit.yaml)
+[![Tests](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml/badge.svg?branch=main)](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml)
+[![Coverage badge](https://github.com/verily-src/dataset-creator/raw/python-coverage-comment-action-data/badge.svg)](https://github.com/verily-src/dataset-creator/tree/python-coverage-comment-action-data)
 
 Installation:
 ```sh
 pip install --extra-index-url https://download.pytorch.org/whl/cpu \
-    "git+ssh://git@github.com/itayrav/oss-dataset-creator.git"
+    "git+ssh://git@github.com/verily-src/dataset-creator.git"
 ```
 
 ## What is DatasetCreator?
