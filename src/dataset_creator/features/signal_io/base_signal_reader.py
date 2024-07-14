@@ -9,7 +9,7 @@ import datetime
 import enum
 import functools
 import os
-from typing import Mapping, Optional, Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 
@@ -24,8 +24,8 @@ class PhysicalUnit(enum.Enum):
   NANO_VOLT = 1e-9
 
 
-STRING_TO_PHYSICAL_UNIT: Mapping[str, PhysicalUnit] = collections.defaultdict(
-    lambda: PhysicalUnit.UNKNOWN
+STRING_TO_PHYSICAL_UNIT: collections.defaultdict[str, PhysicalUnit] = (
+    collections.defaultdict(lambda: PhysicalUnit.UNKNOWN)
 )
 STRING_TO_PHYSICAL_UNIT.update(
     {
