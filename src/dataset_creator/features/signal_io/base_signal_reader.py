@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import abc
+import collections
 import dataclasses
 import datetime
 import enum
@@ -23,15 +24,18 @@ class PhysicalUnit(enum.Enum):
   NANO_VOLT = 1e-9
 
 
-STRING_TO_PHYSICAL_UNIT = {
-  'V': PhysicalUnit.VOLT,
-  'mV': PhysicalUnit.MILLI_VOLT,
-  # µ has 2 possible unicode characters, so be ready to use both.
-  'μV': PhysicalUnit.MICRO_VOLT,  # b'\xce\xbcV'
-  'µV': PhysicalUnit.MICRO_VOLT,  # b'\xc2\xb5V'
-  'uV': PhysicalUnit.MICRO_VOLT,
-  'nV': PhysicalUnit.NANO_VOLT,
-}
+STRING_TO_PHYSICAL_UNIT = collections.defaultdict(lambda: PhysicalUnit.UNKNOWN)
+STRING_TO_PHYSICAL_UNIT.update(
+    {
+        'V': PhysicalUnit.VOLT,
+        'mV': PhysicalUnit.MILLI_VOLT,
+        # µ has 2 possible unicode characters, so be ready to use both.
+        'μV': PhysicalUnit.MICRO_VOLT,  # b'\xce\xbcV'
+        'µV': PhysicalUnit.MICRO_VOLT,  # b'\xc2\xb5V'
+        'uV': PhysicalUnit.MICRO_VOLT,
+        'nV': PhysicalUnit.NANO_VOLT,
+    }
+)
 
 
 @dataclasses.dataclass
