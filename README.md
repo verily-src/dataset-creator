@@ -36,7 +36,7 @@
 | src/dataset\_creator/features/serializable\_stateless\_function\_test.py |       39 |        0 |     100% |           |
 | src/dataset\_creator/features/serializable\_test.py                      |       17 |        0 |     100% |           |
 | src/dataset\_creator/features/signal\_io/\_\_init\_\_.py                 |        0 |        0 |     100% |           |
-| src/dataset\_creator/features/signal\_io/base\_signal\_reader.py         |       62 |        0 |     100% |           |
+| src/dataset\_creator/features/signal\_io/base\_signal\_reader.py         |       64 |        0 |     100% |           |
 | src/dataset\_creator/features/signal\_io/brain\_vision\_reader.py        |       93 |        0 |     100% |           |
 | src/dataset\_creator/features/signal\_io/brain\_vision\_reader\_test.py  |       28 |        0 |     100% |           |
 | src/dataset\_creator/features/signal\_io/continuous\_reader.py           |       85 |        0 |     100% |           |
@@ -84,7 +84,7 @@
 | src/dataset\_creator/pipeline/pipeline\_utils\_test.py                   |       72 |        0 |     100% |           |
 | src/dataset\_creator/test\_utils.py                                      |       58 |        0 |     100% |           |
 | src/dataset\_creator/test\_utils\_test.py                                |       33 |        0 |     100% |           |
-|                                                                **TOTAL** | **4761** |    **0** | **100%** |           |
+|                                                                **TOTAL** | **4763** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
