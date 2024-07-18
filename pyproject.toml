@@ -10,7 +10,7 @@ build-backend = "flit_core.buildapi"
 name = "dataset-creator"
 # Change these values for your team and library.
 authors = [
-    {name = "Itay Ravia", email = "itayravia@gmail.com"},
+    {name = "Itay Ravia", email = "itayr@verily.com"},
 ]
 description = "Repository for Dataset Creator implementation"
 

@@ -41,15 +41,15 @@ class VideoFileIOTest(parameterized.TestCase):
   def test_read_local_mp4_file(self):
     with video_io.VideoFileReader(mock_video_path()) as reader:
       frames = list(reader.frames())
-      self.assertLen(frames, 15)
-      self.assertEqual(frames[0].shape, (1920, 1080, 3))
+      self.assertLen(frames, 30)
+      self.assertEqual(frames[0].shape, (400, 600, 3))
 
-      self.assertEqual(reader.frame_count, 15)
+      self.assertEqual(reader.frame_count, 30)
       self.assertEqual(reader.fps, 30)
-      self.assertEqual(reader.duration_in_millis, 500)
-      self.assertEqual(reader.width, 1080)
-      self.assertEqual(reader.height, 1920)
-      self.assertEqual(reader.bitrate, 4834)
+      self.assertEqual(reader.duration_in_millis, 1000)
+      self.assertEqual(reader.width, 600)
+      self.assertEqual(reader.height, 400)
+      self.assertEqual(reader.bitrate, 638)
 
   def test_read_specific_time(self):
     with video_io.VideoFileReader(mock_video_path()) as reader:
@@ -82,7 +82,7 @@ class VideoFileIOTest(parameterized.TestCase):
     with video_io.VideoFileReader(mock_video_path()) as reader:
       reader.read_full_resolution_by_frame_number(4)
       frames = list(reader.frames())
-      self.assertLen(frames, 15)
+      self.assertLen(frames, 30)
 
   @parameterized.named_parameters(
       ('negative_timestamp', -1, None),

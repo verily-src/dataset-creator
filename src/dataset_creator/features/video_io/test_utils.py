@@ -27,7 +27,7 @@ def are_images_almost_identical(first: np.ndarray, second: np.ndarray) -> bool:
   first = first.astype(int)
   second = second.astype(int)
   diff = np.abs(first - second)
-  return diff.max() < 45 and diff.mean() < 1.5
+  return diff.max() < 45 and diff.mean() < 3
 
 
 def assert_frames_almost_identical(

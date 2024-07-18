@@ -24,7 +24,11 @@ class MultiLeadSignalFeatureTest(parameterized.TestCase, tf.test.TestCase):
   def setUp(self):
     super().setUp()
     self.reader = signal_reader.EdfSignalReader(
-        os.path.join(_THIS_DIR, 'signal_io', 'testdata', 'HS6EO.edf')
+        os.path.join(
+            _THIS_DIR,
+            'signal_io/testdata',
+            'test_edf_overlapping_annotations.edf'
+        )
     )
     self.feature = _MultiLeadSignalFeature(
         self.reader, resample_at=10, start=0, end=250
@@ -129,10 +133,10 @@ class MultiLeadSignalFeatureTest(parameterized.TestCase, tf.test.TestCase):
         self.mock_signals
     )[fields.MULTI_LEAD_LABELS]  # type: ignore[assignment]
 
-    no_pattern_fp1_index = no_pattern_labels.index('EEG Fp1-LE')
-    no_pattern_fp2_index = no_pattern_labels.index('EEG Fp2-LE')
-    fp1_index = labels.index('EEG Fp1-LE')
-    fp2_index = labels.index('EEG Fp2-LE')
+    no_pattern_fp1_index = no_pattern_labels.index('Fp1.')
+    no_pattern_fp2_index = no_pattern_labels.index('Fp2.')
+    fp1_index = labels.index('Fp1.')
+    fp2_index = labels.index('Fp2.')
 
     self.assertGreater(no_pattern_fp2_index, no_pattern_fp1_index)
     self.assertGreater(fp1_index, fp2_index)

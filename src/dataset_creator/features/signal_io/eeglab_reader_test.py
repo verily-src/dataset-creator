@@ -7,7 +7,7 @@ from absl.testing import parameterized  # type: ignore[import]
 from dataset_creator.features.signal_io import eeglab_reader
 
 THIS_DIR = os.path.dirname(__file__)
-V5_FILE = os.path.join(THIS_DIR, 'testdata', 'sub-S1_task-unnamed_eeg.set')
+V5_FILE = os.path.join(THIS_DIR, 'testdata', 'test_epochs_renamed.set')
 V5_ONEFILE = os.path.join(THIS_DIR, 'testdata', 'test_epochs_onefile.set')
 V7_FILE = os.path.join(THIS_DIR, 'testdata', 'test_raw_onefile_h5.set')
 V7_MULTITRIAL = os.path.join(THIS_DIR, 'testdata', 'test_epochs_onefile_h5.set')
@@ -20,10 +20,10 @@ class EEGLABSignalReaderTest(parameterized.TestCase):
     self.reader = eeglab_reader.EEGLABSignalReader(V5_FILE)
 
   def test_num_leads(self):
-    self.assertEqual(self.reader.num_leads, 24)
+    self.assertEqual(self.reader.num_leads, 2)
 
   def test_sampling_frequency(self):
-    self.assertEqual(self.reader.sampling_frequency, 300)
+    self.assertEqual(self.reader.sampling_frequency, 50)
 
   def test_lead_headers_number_match_num_leads(self):
     self.assertLen(self.reader.lead_headers, self.reader.num_leads)

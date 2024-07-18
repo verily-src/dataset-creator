@@ -7,7 +7,9 @@ from absl.testing import parameterized  # type: ignore[import]
 from dataset_creator.features.signal_io import edf_reader
 
 _THIS_DIR = os.path.dirname(__file__)
-EDF_FILE = os.path.join(_THIS_DIR, 'testdata', 'HS6EO.edf')
+EDF_FILE = os.path.join(
+    _THIS_DIR, 'testdata', 'test_edf_overlapping_annotations.edf'
+)
 BDF_FILE = os.path.join(_THIS_DIR, 'testdata', 'test_bdf_stim_channel.bdf')
 
 
@@ -26,10 +28,10 @@ class EdfReaderTest(parameterized.TestCase):
       _ = edf_reader.EdfSignalReader('/test/signal.xyz', check_path=False)
 
   def test_num_leads(self):
-    self.assertEqual(self.reader.num_leads, 23)
+    self.assertEqual(self.reader.num_leads, 65)
 
   def test_sampling_frequency(self):
-    self.assertEqual(self.reader.sampling_frequency, 256)
+    self.assertEqual(self.reader.sampling_frequency, 128)
 
   def test_lead_headers_number_match_num_leads(self):
     self.assertLen(self.reader.lead_headers, self.reader.num_leads)

@@ -14,14 +14,14 @@ class WfdbSignalReaderTest(absltest.TestCase):
   def setUp(self):
     super().setUp()
     self.reader = wfdb_reader.WfdbReader(
-        os.path.join(_THIS_DIR, 'testdata', 'JS00001.hea')
+        os.path.join(_THIS_DIR, 'testdata', 'a103l.hea')
     )
 
   def test_num_leads(self):
-    self.assertEqual(self.reader.num_leads, 12)
+    self.assertEqual(self.reader.num_leads, 3)
 
   def test_sampling_frequency(self):
-    self.assertEqual(self.reader.sampling_frequency, 500)
+    self.assertEqual(self.reader.sampling_frequency, 250)
 
   def test_lead_headers_number_match_num_leads(self):
     self.assertLen(self.reader.lead_headers, self.reader.num_leads)
