@@ -78,15 +78,15 @@ from dataset_creator.dataset_creator import dataset_creator
 from dataset_creator.dataset_creator.features import images_feature
 
 
-DATASET_NAME = 'lap_chole_phase_recognition'
-_CHOLEC80_ROOT_DIR = '/gcs/surgery-bucket/cholec80/'
+DATASET_NAME = 'test_dataset'
+_ROOT_DIR = '/gcs/data-bucket/test_data'
 
 
-def cholec80_get_generator():
-  for fn in os.listdir(_CHOLEC80_ROOT_DIR):
+def test_dataset_generator():
+  for fn in os.listdir(_ROOT_DIR):
     if not fn.endswith('.mp4'):
       continue
-    video_path = os.path.join(_CHOLEC80_ROOT_DIR, fn)
+    video_path = os.path.join(_ROOT_DIR, fn)
     # Set check_path to False to avoid I/O so the generator is fast.
     reader = video_io.VideoFileReader(video_path, check_path=False)
 
@@ -109,7 +109,7 @@ primitive. Given that generator, the instantiation of the DatasetCreator is
 simply given by:
 
 ```python
-creator = dataset_creator.DatasetCreator(DATASET_NAME, cholec80_get_generator)
+creator = dataset_creator.DatasetCreator(DATASET_NAME, test_dataset_generator)
 ```
 
 IMPORTANT NOTE: A dataset is identified by its name and its creation time. If
