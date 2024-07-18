@@ -641,7 +641,7 @@ tomli==2.0.1
     # via pytest
 torch==2.1.2+cpu
     # via dataset-creator (pyproject.toml)
-tornado==6.4
+tornado==6.4.1
     # via
     #   ipykernel
     #   jupyter-client
