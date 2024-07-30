@@ -11,20 +11,15 @@ Developed and maintained by the nice folks at [Verily](https://verily.com/).
 [![Tests](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml/badge.svg?branch=main)](https://github.com/verily-src/dataset-creator/actions/workflows/run_tests.yaml)
 [![Coverage badge](https://github.com/verily-src/dataset-creator/raw/python-coverage-comment-action-data/badge.svg)](https://github.com/verily-src/dataset-creator/tree/python-coverage-comment-action-data)
 
-Installation:
-```sh
-pip install --extra-index-url https://download.pytorch.org/whl/cpu \
-    "git+ssh://git@github.com/verily-src/dataset-creator.git"
-```
-
 ## What is DatasetCreator?
 
-`DatasetCreator` is a tool that allows creating PyTorch / Tensorflow datasets in
-an easy, reproducible fashion. To get a new dataset, a user only needs to create
-a python generator that specifies "recipes" for examples that should be included
-in that dataset.
+`DatasetCreator` is a library that allows automatically creating data pipelines
+and convert python generators into PyTorch / Tensorflow datasets, in an easy,
+reproducible fashion. To get a new dataset, a user only needs to create a python
+generator that specifies "recipes" for examples that should be included in that
+dataset.
 
-`DatasetCreator` supports 5 main functionalities:
+The main functionalities supported by `DatasetCreator` include:
 
 1.  `DatasetCreator.create_example_bank()`: Creates a beam pipeline to populate
     the Examples yielded from the generator, and saves all populated examples to
@@ -50,6 +45,25 @@ in that dataset.
     DataFrame containing all creation times of datasets with name
     `'my_dataset'`. The dataset can then be reproduced by:
     `DatasetCreator(creation_time=registered_df['creation_time'][X])`
+
+## Getting started
+
+Currently, only supported environment is GCP. To get started, please use the
+configuration script located in setup/gcp/configure_project.sh to configure
+your GCP project. This will likely require some additional IAM permissions to
+the default ComputeEngine service account.
+
+This configuration script sets up a global startup script for all project VMs
+which:
+  1. Creates a new pyenv environment, and sets it as default environment.
+  2. Installs all required packages in that environment.
+  3. Mounts all GCS buckets in /gcs.
+
+To manually install, please manually install the Riegeli library, and use:
+```sh
+pip install --extra-index-url https://download.pytorch.org/whl/cpu \
+    "git+ssh://git@github.com/verily-src/dataset-creator.git"
+```
 
 ## Creating a Dataset the first time
 
