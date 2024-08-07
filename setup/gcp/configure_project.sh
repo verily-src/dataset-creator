@@ -89,8 +89,6 @@ print_role_if_missing () {
 }
 
 missing_roles=$(
-    print_role_if_missing "$default_cloudbuild_account" roles/secretmanager.secretAccessor &&
-    print_role_if_missing "$default_compute_account" roles/secretmanager.secretAccessor &&
     print_role_if_missing "$default_compute_account" roles/dataflow.worker &&
     print_role_if_missing "$default_compute_account" roles/spanner.databaseUser &&
     print_role_if_missing "$default_compute_account" roles/pubsub.editor &&
