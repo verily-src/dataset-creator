@@ -3,14 +3,9 @@
 # =========================== Validate preconditions  ==========================
 
 usage() {
-  echo "Usage: $0 [-u] <project_id> <repo_access_token>"
+  echo "Usage: $0 [-u] <project_id>"
   echo "  -u: An optional flag, indicating a configuration upgrade."
   echo "  project_id: The name of the GCP project to config dataset creator to."
-  echo "  repo_access_token: A github access token with repo permissions."
-  echo ""
-  echo "Access tokens can be created by configuring in:"
-  echo "Github.com > Settings > Developer settings > Personal access tokens."
-  echo "Please make sure to only grant repo permissions to this access token."
   exit 1
 }
 
@@ -31,13 +26,13 @@ done
 # Shift the parsed options out of the argument list
 shift $((OPTIND-1))
 
-if ! [ "$(basename $(pwd))" = "oss-dataset-creator" ]; then
-  echo "Please run this script from workdir oss-dataset-creator"
+if ! [ "$(basename $(pwd))" = "dataset-creator" ]; then
+  echo "Please run this script from workdir dataset-creator"
   exit 1
 fi
 
 # Check if the project ID argument is provided
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
   usage
 fi
 
@@ -49,7 +44,6 @@ log () {
 
 # Extract the project ID from the command line argument
 project_id="$1"
-repo_access_token="$2"
 
 # Check if gcloud is installed
 if ! command -v gcloud &> /dev/null; then
@@ -201,29 +195,6 @@ else
     else
         log "Failed to create bucket $bucket_name in $project_id."
     fi
-fi
-
-# ================ Upload GitHub access token to SecretManager =================
-
-secret_name="github_repo_access_token"
-gcloud secrets describe "$secret_name" --project="$project_id" &>/dev/null
-secret_description_exit_code=$?
-
-# Check if the secret exists
-if [ "$do_upgrade" = "false" ] && [ $secret_description_exit_code -eq 0 ]; then
-    log "The secret '$secret_name' already exists."
-else
-    log "Setting secret '$secret_name'..."
-
-    if [ $secret_description_exit_code -ne 0 ]; then
-      # Create the secret
-      gcloud secrets create "$secret_name" --project="$project_id"
-    fi
-    # Set the secret's value (can be modified as needed)
-    echo "$repo_access_token" | gcloud secrets versions add \
-      "$secret_name" --project="$project_id" --data-file=-
-
-    log "The secret '$secret_name' has been set."
 fi
 
 # ================== Upload startup script and riegeli patches =================

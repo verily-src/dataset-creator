@@ -218,28 +218,6 @@ if command -v /opt/conda/bin/jupyter &> /dev/null; then
   fi
 fi
 
-# ============================= Set GitHub access ==============================
-
-if [ -z "$repo_access_token" ]; then
-  log "Repo access token not provided from an outer context. Pulling it..."
-  repo_access_token=$(
-      gcloud secrets versions access latest \
-          --secret="github_repo_access_token" --project="$project_id"
-  )
-else
-  log "Repo access token provided from an outer context."
-fi
-
-# Trim any whitespace in the access token, in case it exists.
-repo_access_token=$(echo -e "$repo_access_token" | tr -d '\n\r\t ')
-
-if [ -n "$repo_access_token" ]; then
-  log "Configuring git to use access token instead of SSH keys."
-  git config --system \
-      url."https://$repo_access_token@github.com/".insteadOf \
-      ssh://git@github.com/
-fi
-
 # ========================== Install DatasetCreator ============================
 
 # Define the GitHub repository and package name
@@ -351,9 +329,3 @@ fi
 # ============================== Clean pip cache ===============================
 
 pip cache purge
-
-# ============================ Unset GitHub access =============================
-
-log "Returning to SSH keys instead of secret access token."
-git config --system \
-    --unset url."https://$repo_access_token@github.com/".insteadOf

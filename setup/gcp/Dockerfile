@@ -9,8 +9,6 @@
 FROM apache/beam_python3.9_sdk:2.56.0
 
 ARG PROJECT_ID
-ARG ACCESS_TOKEN
-ENV repo_access_token=${ACCESS_TOKEN}
 ENV project_id=${PROJECT_ID}
 ENV patches_dir=/opt/app/
 ENV shrink_pipeline_image=true

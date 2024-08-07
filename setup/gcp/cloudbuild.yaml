@@ -7,16 +7,9 @@ steps:
   - |
     docker build -t \
       us-west1-docker.pkg.dev/$PROJECT_ID/datasetcreator-docker/datasetcreator-image:latest \
-      --build-arg ACCESS_TOKEN="$$REPO_ACCESS_TOKEN" \
       --build-arg PROJECT_ID="$PROJECT_ID" \
       -f setup/gcp/Dockerfile \
       setup
-  secretEnv: ['REPO_ACCESS_TOKEN']
 
 images:
   - us-west1-docker.pkg.dev/$PROJECT_ID/datasetcreator-docker/datasetcreator-image:latest
-
-availableSecrets:
-  secretManager:
-  - versionName: projects/$PROJECT_ID/secrets/github_repo_access_token/versions/latest
-    env: 'REPO_ACCESS_TOKEN'
