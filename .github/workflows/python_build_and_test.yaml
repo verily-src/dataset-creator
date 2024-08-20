@@ -71,6 +71,22 @@ jobs:
         cache: 'pip'
         cache-dependency-path: '${{ inputs.path }}/requirements*.txt'
 
+    - name: Determine Google Cloud Auth Input
+      id: determine_auth_input
+      run: |
+        if [[ -n "${{ inputs.wif }}" ]]; then
+          echo "token_format=access_token" >> "$GITHUB_ENV"
+        fi
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      continue-on-error: true
+      with:
+        token_format: ${{ env.token_format }}
+        credentials_json: ${{ secrets.GCP_SA_KEY || secrets.DS_ARTIFACT_REGISTRY_READER_SA_KEY }}
+        workload_identity_provider: '${{ inputs.wip }}'
+        service_account: ${{ inputs.gcp_sa || secrets.GCP_SA_EMAIL || secrets.DS_ARTIFACT_REGISTRY_READER_SA_EMAIL }}
+        export_environment_variables: true
+
     - name: Install extra system packages
       env:
         PACKAGES: ${{ join(fromJson(inputs.system_packages), ' ') }}
