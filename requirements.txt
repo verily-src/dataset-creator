@@ -55,7 +55,7 @@ contourpy==1.2.1
     # via matplotlib
 crcmod==1.7
     # via apache-beam
-cryptography==42.0.7
+cryptography==43.0.1
     # via secretstorage
 cycler==0.12.1
     # via matplotlib
