@@ -698,7 +698,7 @@ webencodings==0.5.1
     #   tinycss2
 websockets==12.0
     # via yt-dlp
-werkzeug==3.0.3
+werkzeug==3.0.6
     # via tensorboard
 wfdb==4.1.2
     # via dataset-creator (pyproject.toml)
