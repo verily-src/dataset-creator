@@ -685,7 +685,7 @@ typing-extensions==4.5.0
     #   torch
 tzlocal==5.2
     # via js2py
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   requests
     #   types-requests
