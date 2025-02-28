@@ -708,7 +708,7 @@ widgetsnbextension==4.0.10
     # via ipywidgets
 wrapt==1.14.1
     # via tensorflow-cpu
-yt-dlp==2024.4.9
+yt-dlp==2024.7.7
     # via dataset-creator (pyproject.toml)
 zipp==3.18.1
     # via
